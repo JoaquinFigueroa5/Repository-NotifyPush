@@ -1,0 +1,17 @@
+{
+    "name": "joaki/notify-push",
+    "autoload": {
+        "psr-4": {
+            "Joaki\\NotifyPush\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "JoaquinFigueroa5",
+            "email": "kinchin.figueroa@gmail.com"
+        }
+    ],
+    "require": {
+        "minishlink/web-push": "^9.0"
+    }
+}
