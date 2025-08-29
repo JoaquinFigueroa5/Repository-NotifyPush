@@ -8,8 +8,7 @@
 
 **Sistema avanzado de notificaciones push que funciona tanto en primer plano como en segundo plano**
 
-[🚀 Instalación](#-instalación) • [⚙️ Configuración](#️-configuración) • [📖 Documentación](#-documentación) • [🤝 Contribuir](#-contribuir)
-
+[🚀 Instalación](#-instalación) • [⚙️ Configuración](#️-configuración) • [📖 Documentación](#-documentación)
 </div>
 
 ---
@@ -23,7 +22,6 @@
 - [🔑 Generación de VAPID Keys](#-generación-de-vapid-keys)
 - [📱 Uso](#-uso)
 - [🛠️ Solución de Problemas](#️-solución-de-problemas)
-- [🤝 Contribuir](#-contribuir)
 - [📄 Licencia](#-licencia)
 
 ---
@@ -88,7 +86,7 @@ composer require php-amqplib/php-amqplib
    ```
    
    <div align="center">
-   <img src="https://www.ssldragon.com/wp-content/uploads/2024/04/Environmental-variables-set-up-500x475.webp" alt="Configuración de variables de entorno" width="500"/>
+   <img src="/imagesReadme/image2.png" alt="Configuración de variables de entorno" width="500"/>
    </div>
 
 3. **Verificar instalación:**
@@ -119,7 +117,7 @@ composer require php-amqplib/php-amqplib
    ```
    
    <div align="center">
-   <img src="image.png" alt="Configuración PHP.ini" width="600"/>
+   <img src="/imagesReadme/image2.png" alt="Configuración PHP.ini" width="600"/>
    </div>
 
 ---
