@@ -55,7 +55,7 @@ Antes de comenzar, asegúrate de tener instalado:
 ### 1️⃣ Clonar el repositorio
 
 ```bash
-git clone https://github.com/tu-usuario/Repository-NotifyPush.git
+git clone https://github.com/JoaquinFigueroa5/Repository-NotifyPush
 cd Repository-NotifyPush
 ```
 
@@ -63,12 +63,8 @@ cd Repository-NotifyPush
 
 ```bash
 composer install
-```
-
-### 3️⃣ Configurar permisos
-
-```bash
-chmod +x generateKeys.php
+composer require minishlink/web-push
+composer require php-amqplib/php-amqplib
 ```
 
 ---
@@ -97,7 +93,7 @@ chmod +x generateKeys.php
 
 3. **Verificar instalación:**
    ```bash
-   openssl version
+   openssl -v
    ```
    
    ✅ **Salida esperada:** `OpenSSL 1.1.1x`
@@ -144,7 +140,6 @@ php generateKeys.php
 📋 Public Key:  BEl62iUYgUivxIkv69yViEuiBIa6Ixi...
 🔐 Private Key: aUWqagazNjr0BqXaS3Y2EmSKDs...
 
-✅ Las claves han sido guardadas en: /config/vapid-keys.json
 ```
 
 ---
@@ -155,39 +150,46 @@ php generateKeys.php
 
 ```php
 <?php
-require_once 'vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
-use NotifyPush\WebPush;
-use NotifyPush\VapidKeys;
+use Minishlink\WebPush\WebPush;
+use Minishlink\WebPush\Subscription;
 
 // Cargar claves VAPID
 $keys = VapidKeys::load();
 
 // Configurar cliente Web Push
-$webPush = new WebPush([
+$auth = [
     'VAPID' => [
-        'subject' => 'mailto:tu-email@ejemplo.com',
-        'publicKey' => $keys->getPublicKey(),
-        'privateKey' => $keys->getPrivateKey()
-    ]
-]);
+        'subject'    => 'mailto:tu-email@gmail.com',
+        'publicKey'  => 'CLAVE_PUBLICA_GENERADA',
+        'privateKey' => 'CLAVE_PRIVADA_GENERADA',
+    ],
+];
+
+$webPush = new WebPush($auth);
+
+$webPush->queueNotification(
+    $subscription,
+    json_encode([
+        'title' => 'Hola 👋',
+        'body'  => '¡Notificación push individual!',
+    ])
+);
 ```
 
 ### 📤 Enviar notificación
 
 ```php
 // Enviar notificación push
-$notification = [
-    'title' => '🎉 ¡Nueva notificación!',
-    'body' => 'Este es el contenido de tu notificación',
-    'icon' => '/assets/icon.png',
-    'badge' => '/assets/badge.png'
-];
+self.addEventListener('push', e => {
+    const data = e.data.json();
+    self.registration.showNotification(data.title, {
+        body: data.body,
+        icon: 'https://cdn-icons-png.flaticon.com/512/1827/1827370.png'
+    });
+});
 
-$result = $webPush->sendOneNotification(
-    $subscription,
-    json_encode($notification)
-);
 ```
 
 ---
@@ -236,11 +238,11 @@ $result = $webPush->sendOneNotification(
 
 | Característica | Estado | Versión |
 |----------------|--------|---------|
-| Notificaciones Web Push | ✅ Completo | 2.1.0 |
-| Soporte multinavegador | ✅ Completo | 2.1.0 |
-| Documentación | ✅ Completo | 2.1.0 |
-| Testing automatizado | 🔄 En desarrollo | 2.2.0 |
-| Dashboard admin | 🔄 En desarrollo | 2.2.0 |
+| Notificaciones Web Push | ✅ Completo | 1.1.0 |
+| Soporte multinavegador | ✅ Completo (Parcial) | 1.1.0 |
+| Documentación | ✅ Completo | 1.0.0 |
+| Testing automatizado | 🔝 A futuro | 0.0.0 |
+| Dashboard admin | 🔝 A futuro | 0.0.0 |
 
 ---
 ### 🚀 Proceso de contribución
@@ -261,14 +263,14 @@ Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.m
 
 <div align="center">
 
-**⭐ Si este proyecto te ha sido útil, ¡danos una estrella!**
+**⭐ Si este proyecto te ha sido útil, !dame una una estrella!**
 
-![Visitors](https://visitor-badge.laobi.icu/badge?page_id=tu-usuario.Repository-NotifyPush)
-![Stars](https://img.shields.io/github/stars/tu-usuario/Repository-NotifyPush?style=social)
-![Forks](https://img.shields.io/github/forks/tu-usuario/Repository-NotifyPush?style=social)
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=JoaquinFigueroa5.Repository-NotifyPush)
+![Stars](https://img.shields.io/github/stars/JoaquinFigueroa5/Repository-NotifyPush?style=social)
+![Forks](https://img.shields.io/github/forks/JoaquinFigueroa5/Repository-NotifyPush?style=social)
 
 ---
 
-Hecho con ❤️ por [Tu Nombre](https://github.com/tu-usuario)
+Hecho con ❤️ por [Joaki](https://github.com/JoaquinFigueroa5)
 
 </div>
