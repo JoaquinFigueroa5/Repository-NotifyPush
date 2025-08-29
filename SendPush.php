@@ -1,20 +1,32 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/db.php';
 
 use Minishlink\WebPush\WebPush;
 use Minishlink\WebPush\Subscription;
 
-header('Content-Type: text/plain');
+$targetId = $_GET['navegadorId'] ?? null;
 
-$subscriptionData = json_decode(file_get_contents('subscription.json'), true);
-if (!$subscriptionData) die("No hay suscripción registrada\n");
+if (!$targetId) die("No se especificó navegadorId");
 
-$subscription = Subscription::create($subscriptionData);
+$stmt = $pdo->prepare("SELECT * FROM subscriptions WHERE navegadorId = :nid");
+$stmt->execute([':nid' => $targetId]);
+$data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$data) die("No se encontró suscripción para este navegador");
+
+$subscription = Subscription::create([
+    'endpoint' => $data['endpoint'],
+    'keys' => [
+        'p256dh' => $data['p256dh'],
+        'auth'   => $data['auth']
+    ]
+]);
 
 $auth = [
     'VAPID' => [
-        'subject' => 'mailto:kinchin.figueroa@gmail.com',
-        'publicKey' => trim(file_get_contents('vapid_public.key')),
+        'subject'    => 'mailto:kinchinfigueroa@gmail.com',
+        'publicKey'  => trim(file_get_contents('vapid_public.key')),
         'privateKey' => trim(file_get_contents('vapid_private.key')),
     ],
 ];
@@ -25,18 +37,12 @@ $webPush->queueNotification(
     $subscription,
     json_encode([
         'title' => 'Hola 👋',
-        'body' => '¡Notificación push desde PHP!',
+        'body'  => '¡Notificación push individual!',
     ])
 );
 
-$output = '';
-
 foreach ($webPush->flush() as $report) {
-    if ($report->isSuccess()) {
-        $output .= "Enviado correctamente al endpoint: " . $report->getEndpoint() . "\n";
-    } else {
-        $output .= "Error al enviar: " . $report->getReason() . "\n";
-    }
+    echo $report->isSuccess()
+        ? "Notificación enviada correctamente"
+        : "Error al enviar: " . $report->getReason();
 }
-
-echo $output;

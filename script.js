@@ -1,5 +1,11 @@
 let publicVapidKey = "";
 
+let navegadorId = localStorage.getItem('navegadorId');
+if (!navegadorId) {
+    navegadorId = crypto.randomUUID();
+    localStorage.setItem('navegadorId', navegadorId);
+}
+
 async function fetchVapidKey() {
     const res = await fetch('get_vapid.php');
     const data = await res.json();
@@ -11,7 +17,6 @@ if ('serviceWorker' in navigator) {
         .then(async reg => {
             console.log("Service Worker registrado:", reg);
             await navigator.serviceWorker.ready;
-            console.log("Service Worker listo, obteniendo VAPID key...");
 
             publicVapidKey = await fetchVapidKey();
             initPush();
@@ -21,7 +26,7 @@ if ('serviceWorker' in navigator) {
 
 Notification.requestPermission().then(permission => {
     if (permission !== "granted") {
-        alert("Debes permitir notificaciones");
+        alert("Permiso de notificaciones denegado");
     }
 });
 
@@ -35,20 +40,22 @@ function urlBase64ToUint8Array(base64String) {
 async function initPush() {
     try {
         const reg = await navigator.serviceWorker.ready;
-        console.log(reg);
-        
+
         const sub = await reg.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
         });
 
-        console.log("Suscripción:", sub);
+        const subData = { ...sub.toJSON(), navegadorId };
 
         await fetch('guardar_subscription.php', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(sub)
+            body: JSON.stringify(subData)
         });
+
+        console.log("Suscripción guardada:", subData);
+
     } catch (err) {
         console.error("Error al suscribirse:", err);
     }
@@ -56,11 +63,10 @@ async function initPush() {
 
 document.getElementById("notificationBtn").addEventListener("click", async () => {
     try {
-        const res = await fetch("SendPush.php");
+        const res = await fetch(`SendPush.php?navegadorId=${encodeURIComponent(navegadorId)}`);
         const text = await res.text();
         console.log("Respuesta de PHP:", text);
     } catch (err) {
         console.error("Error al llamar a SendPush.php:", err);
     }
 });
-
