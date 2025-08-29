@@ -117,7 +117,7 @@ composer require php-amqplib/php-amqplib
    ```
    
    <div align="center">
-   <img src="/imagesReadme/image2.png" alt="Configuración PHP.ini" width="600"/>
+   <img src="/imagesReadme/image.png" alt="Configuración PHP.ini" width="600"/>
    </div>
 
 ---
